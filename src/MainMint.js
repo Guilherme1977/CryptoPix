@@ -15,6 +15,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
   const [userAddress, setUserAddress] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  const[CPF, setCPF] = useState(0);
 
   async function chamadaAPI() {
     //e.preventDefault();
@@ -61,6 +62,10 @@ const MaintMint = ({ accounts, setAccounts }) => {
     setConfirmTrans(false)
   }
 
+  function test() {
+    console.log(CPF)
+  }
+
   async function handleMint() {
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -69,8 +74,9 @@ const MaintMint = ({ accounts, setAccounts }) => {
       const address = await signer.getAddress();
       await setUserAddress(address);
       if(body.includes("@") && title !== '' && body.includes(".")){
-      console.log(accounts[0])}
-      setConfirmTrans(true)
+      console.log(accounts[0])
+      setConfirmTrans(true)}
+      
             /*
       const contract = new ethers.Contract(
         roboPunksNFTAddress,
@@ -104,6 +110,11 @@ const MaintMint = ({ accounts, setAccounts }) => {
     if (mintAmount >= 3) return;
     setMintAmount(mintAmount + 1);
   };
+
+  const handleCPF = (e) => {
+    if(e.target.value>='0' && e.target.value<='9' && isNaN(e.target.value) == false && e.target.value != ",") setCPF(e.target.value);
+    console.log(CPF)
+  }
 
   if (isMinting == true){
     return(<div>
@@ -154,7 +165,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
       <Box width="1200px">
         <div>
           <Text fontSize="48px" textShadow="0 5px #000000">
-            Trix Battle Tactics NFT
+            CryptoPix
           </Text>
           <Text
             fontSize="30px"
@@ -162,7 +173,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
             fontFamily="VT323"
             textShadow="0 2px 2px #000000"
           >
-            Minte o NFT com a sua metamask.
+            Criptomoedas na sua metamask diretamente com Pix
           </Text>
         </div>
 
@@ -185,6 +196,16 @@ const MaintMint = ({ accounts, setAccounts }) => {
                   placeholder="Email"
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
+                  style={{ width: "300px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                />
+                </div>
+                <div>
+                  <input 
+                  type="text" 
+                  required 
+                  placeholder="Quantidade de reais"
+                  value={CPF}
+                  onChange={handleCPF}
                   style={{ width: "300px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
                 />
                 </div>
@@ -243,7 +264,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
               fontFamily="inherit"
               padding="15px"
               margin="10"
-              onClick={handleMint}
+              onClick={test}
             >
               Mintar {mintAmount} NFT
             </Button>
@@ -257,7 +278,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
             textShadow="0 3px #000000"
             color="#008fd4"
           >
-            Connect your wallet to mint.
+            Connect your wallet to swap.
           </Text>
         )}
       </Box>
