@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ethers, BigNumber } from "ethers";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import roboPunksNFT from "./RoboPunksNFT.json";
-import { ConsoleSqlOutlined, LoadingOutlined } from '@ant-design/icons'
+import { ConsoleSqlOutlined, LoadingOutlined, UserAddOutlined } from '@ant-design/icons'
 import { Spin, Row, Col } from "antd";
 var axios = require('axios');
 
@@ -15,9 +15,12 @@ const MaintMint = ({ accounts, setAccounts }) => {
   const [userAddress, setUserAddress] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const[CPF, setCPF] = useState(0);
+  const[CPF, setCPF] = useState();
+  const [reais, setReais] = useState();
+  const [amountMatic, setAmountMatic] = useState();
+  const [theUser, setUser] = useState('');
 
-  async function chamadaAPI() {
+  async function chamadaAPI(user) {
     //e.preventDefault();
     setIsMinting(true)
     if (window.ethereum) {
@@ -30,15 +33,18 @@ const MaintMint = ({ accounts, setAccounts }) => {
         "quantity": mintAmount.toString(),
         "metamask": address,
         "name": title,
-        "email": body
+        "email": body,
+        "user": theUser,
+        "cpf": CPF,
+        "quantity": reais
       });
       
       var config = {
         method: 'post',
         url: 'https://parseapi.back4app.com/functions/swapPix',
         headers: { 
-          'X-Parse-Application-Id': 'cACXAALjoAERRdB7jMAPSvMwBAfv7MC2yebDYxSw', 
-          'X-Parse-REST-API-Key': 'iDcYvliNQkyCRm0L52ca2ghI85cyVNa9zAYI6Xus', 
+          'X-Parse-Application-Id': 'mpxuNMEJnSlytSS75jhHdt4O3bCpxgRr6glWHnKw', 
+          'X-Parse-REST-API-Key': 'Spj9NomBOJYsPp2Dh4QFfKjcKIDXOYUhqCONK7AH', 
           'Content-Type': 'application/json'
         },
         data : data
@@ -66,6 +72,147 @@ const MaintMint = ({ accounts, setAccounts }) => {
     console.log(CPF)
   }
 
+  async function verifyUser() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    console.log(provider)
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+    var data = JSON.stringify({
+      "quantity": mintAmount.toString(),
+      "metamask": address,
+      "name": title,
+      "email": body,
+      "amount": reais
+    });
+    
+    var config = {
+      method: 'post',
+      url: 'https://parseapi.back4app.com/functions/verificarUsuario',
+      headers: { 
+        'X-Parse-Application-Id': 'mpxuNMEJnSlytSS75jhHdt4O3bCpxgRr6glWHnKw', 
+        'X-Parse-REST-API-Key': 'Spj9NomBOJYsPp2Dh4QFfKjcKIDXOYUhqCONK7AH', 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    var final
+    await axios(config)
+    .then(function (response) {
+      final = response.data.result;
+    })
+    .catch(function (error) {
+      return(error);
+    });
+    
+    return(final)
+  }
+
+  async function criarUser() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    console.log(provider)
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+
+    var data = JSON.stringify({
+      "quantity": mintAmount.toString(),
+      "metamask": address,
+      "name": title,
+      "email": body,
+      "cpf": CPF,
+      "amount": reais
+    });
+    
+    var config = {
+      method: 'post',
+      url: 'https://parseapi.back4app.com/functions/criarUsuario',
+      headers: { 
+        'X-Parse-Application-Id': 'mpxuNMEJnSlytSS75jhHdt4O3bCpxgRr6glWHnKw', 
+        'X-Parse-REST-API-Key': 'Spj9NomBOJYsPp2Dh4QFfKjcKIDXOYUhqCONK7AH', 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    var final
+    await axios(config)
+    .then(function (response) {
+      console.log("User criado:" + response.data)
+    })
+    .catch(function (error) {
+      return(error);
+    });
+    
+    return(final)
+
+  }
+
+  async function master() {
+
+    if(body.includes("@") == false || body.includes(".") == false){
+      alert("Por favor, ensira um e-mail válido")
+     }
+     if(body == '' || title == '' || CPF == '' || reais == ''){
+      alert("Por favor, preencha todos os campos")
+     }
+     if(body.includes("@") && title !== '' && body.includes(".") && CPF !== '' && reais !== ''){
+      const result = await verifyUser().then(async function (response) {
+        if(response){
+          console.log("user existe!!")
+          
+        }
+        else{
+          console.log("user não existe")
+          await criarUser()
+        }
+    });
+
+    const handle = await handleMint();
+      }
+
+
+
+  }
+
+async function getUser() {
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  console.log(provider)
+  const signer = provider.getSigner();
+  const address = await signer.getAddress();
+  await setUserAddress(address);
+
+  var data = JSON.stringify({
+    "quantity": mintAmount.toString(),
+    "metamask": address,
+    "name": title,
+    "email": body,
+    "amount": reais
+  });
+  
+  var config = {
+    method: 'post',
+    url: 'https://parseapi.back4app.com/functions/verificarUsuario',
+    headers: { 
+      'X-Parse-Application-Id': 'mpxuNMEJnSlytSS75jhHdt4O3bCpxgRr6glWHnKw', 
+      'X-Parse-REST-API-Key': 'Spj9NomBOJYsPp2Dh4QFfKjcKIDXOYUhqCONK7AH', 
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+  var user;
+  await axios(config)
+  .then(function (response) {
+    console.log((response.data.result.objectId));
+    user = response.data.result.objectId;
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+  return(user)
+
+}
+
+
   async function handleMint() {
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -74,8 +221,44 @@ const MaintMint = ({ accounts, setAccounts }) => {
       const address = await signer.getAddress();
       await setUserAddress(address);
       if(body.includes("@") && title !== '' && body.includes(".")){
+      var user1 = await getUser(address);
+      setUser(user1);
       console.log(accounts[0])
-      setConfirmTrans(true)}
+      setIsMinting(true)
+      
+      //chamadno api para calcular taxa:
+
+      var data = JSON.stringify({
+        "quantity": mintAmount.toString(),
+        "metamask": address,
+        "name": title,
+        "email": body,
+        "amount": reais
+      });
+      
+      var config = {
+        method: 'post',
+        url: 'https://parseapi.back4app.com/functions/calcularTaxa',
+        headers: { 
+          'X-Parse-Application-Id': 'mpxuNMEJnSlytSS75jhHdt4O3bCpxgRr6glWHnKw', 
+          'X-Parse-REST-API-Key': 'Spj9NomBOJYsPp2Dh4QFfKjcKIDXOYUhqCONK7AH', 
+          'Content-Type': 'application/json'
+        },
+        data : data
+      };
+      
+      await axios(config)
+      .then(function (response) {
+        setAmountMatic(response.data.result)
+        setIsMinting(false)
+        setConfirmTrans(true)
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    }
       
             /*
       const contract = new ethers.Contract(
@@ -95,7 +278,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
      if(body.includes("@") == false || body.includes(".") == false){
       alert("Por favor, ensira um e-mail válido")
      }
-     if(body == '' || title == ''){
+     if(body == '' || title == '' || CPF == '' || reais == ''){
       alert("Por favor, preencha todos os campos")
      }
     }
@@ -112,8 +295,15 @@ const MaintMint = ({ accounts, setAccounts }) => {
   };
 
   const handleCPF = (e) => {
-    if(e.target.value>='0' && e.target.value<='9' && isNaN(e.target.value) == false && e.target.value != ",") setCPF(e.target.value);
-    console.log(CPF)
+    if(e.target.value>='0' && e.target.value<='9' && isNaN(e.target.value) == false && e.target.value != "," || e.target.value == '') setCPF(e.target.value);
+  }
+
+  const handleReais = (e) => {
+    if(e.target.value>='0' && e.target.value<='9' && isNaN(e.target.value) == false || e.target.value == '') {
+      var tt = e.target.value.replace(/,/g, '.')
+      setReais(tt);
+      console.log(reais);
+    }
   }
 
   if (isMinting == true){
@@ -126,8 +316,8 @@ const MaintMint = ({ accounts, setAccounts }) => {
     return (
       <Flex justify="center" align="center" height="100vh" paddingBottom="350px" lineHeight="50px">
         <Box width="1200px">
-          <h1>Você irá realizar a mintagem de {mintAmount} TBT NFT(s) para a carteira {userAddress}</h1>
-          <h2>Total de R$0,01</h2>
+          <h1>Você irá receber de {(amountMatic[0] / 10**18).toFixed(2)} à {(amountMatic[1] / 10**18).toFixed(2)} matics para a carteira {accounts[0]}</h1>
+          <h2>Total de R${reais}</h2>
           <Button
               backgroundColor="red"
               borderRadius="5px"
@@ -186,7 +376,7 @@ const MaintMint = ({ accounts, setAccounts }) => {
                   placeholder="Nome" 
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  style={{ width: "300px", height:"35px", fontFamily: "inherit"}}
+                  style={{ width: "350px", height:"35px", fontFamily: "inherit"}}
                 />
                 <div>
                 <div>
@@ -196,65 +386,31 @@ const MaintMint = ({ accounts, setAccounts }) => {
                   placeholder="Email"
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  style={{ width: "300px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                  style={{ width: "350px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
                 />
                 </div>
                 <div>
                   <input 
                   type="text" 
                   required 
-                  placeholder="Quantidade de reais"
+                  placeholder="CPF"
                   value={CPF}
                   onChange={handleCPF}
-                  style={{ width: "300px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                  style={{ width: "350px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                />
+                </div>
+                <div style={{marginBottom: "15px"}}>
+                  <input 
+                  type="text" 
+                  required 
+                  placeholder="Quantidade de reais"
+                  value={reais}
+                  onChange={handleReais}
+                  style={{ width: "350px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
                 />
                 </div>
                 </div>
             </form>
-            <Flex justify="center" align="center">
-              <Button
-                backgroundColor="#008fd4"
-                borderRadius="5px"
-                boxShadow="0px 2px 2px 1px #0F0F0F"
-                color="white"
-                cursor="pointer"
-                fontFamily="inherit"
-                padding="15px"
-                margin="10"
-                onClick={handleDecrement}
-              >
-                {" "}
-                -
-              </Button>
-
-              <Input
-                readOnly
-                fontFamily="inherit"
-                width="200px"
-                height="40px"
-                textAlign="center"
-                paddingLeft="19px"
-                marginTop="10px"
-                type="number"
-                value={mintAmount}
-              />
-
-              <Button
-                backgroundColor="#008fd4"
-                borderRadius="5px"
-                boxShadow="0px 2px 2px 1px #0F0F0F"
-                color="white"
-                cursor="pointer"
-                fontFamily="inherit"
-                padding="15px"
-                margin="10"
-                onClick={handleIncrement}
-              >
-                {" "}
-                +
-              </Button>
-            </Flex>
-
             <Button
               backgroundColor="#008fd4"
               borderRadius="5px"
@@ -264,9 +420,10 @@ const MaintMint = ({ accounts, setAccounts }) => {
               fontFamily="inherit"
               padding="15px"
               margin="10"
-              onClick={test}
+              onClick={master}
+              //aqui é a função "master"
             >
-              Mintar {mintAmount} NFT
+              Realizar compra de MATIC
             </Button>
           </div>
         ) : (
