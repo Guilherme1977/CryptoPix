@@ -316,7 +316,7 @@ async function getUser() {
     return (
       <Flex justify="center" align="center" height="100vh" paddingBottom="350px" lineHeight="50px">
         <Box width="1200px">
-          <h1>Você irá receber de {(amountMatic[0] / 10**18).toFixed(2)} à {(amountMatic[1] / 10**18).toFixed(2)} matics para a carteira {accounts[0]}</h1>
+          <h1>Você irá receber de {(((amountMatic[0] / 10**18) * 1.8).toFixed(2))} à {(((amountMatic[1] / 10**18) * 2.1).toFixed(2))} matics para a carteira {accounts[0]}</h1>
           <h2>Total de R${reais}</h2>
           <Button
               backgroundColor="red"
@@ -430,10 +430,10 @@ async function getUser() {
           <Text
             marginTop="70px"
             fontSize="30px"
-            letterSpacing="5.5%"
+            letterSpacing="1.5%"
             fontFamily="VT323"
-            textShadow="0 3px #000000"
-            color="#008fd4"
+            
+            color="#000"
           >
             Connect your wallet to swap.
           </Text>
