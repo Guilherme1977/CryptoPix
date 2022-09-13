@@ -308,7 +308,7 @@ async function getUser() {
 
   if (isMinting == true){
     return(<div>
-      <h1>Carregando </h1>
+      <h1   style={{fontFamily:"VT323", fontSize:"45px"}}>Carregando </h1>
       <span><Spin indicator={<LoadingOutlined style={{ fontSize: 100 }} spin />} /></span>
     </div>)}
 
@@ -316,15 +316,16 @@ async function getUser() {
     return (
       <Flex justify="center" align="center" height="100vh" paddingBottom="350px" lineHeight="50px">
         <Box width="1200px">
-          <h1>Você irá receber de {(((amountMatic[0] / 10**18) * 1.8).toFixed(2))} à {(((amountMatic[1] / 10**18) * 2.1).toFixed(2))} matics para a carteira {accounts[0]}</h1>
-          <h2>Total de R${reais}</h2>
+          <h1 style={{fontFamily:"VT323", fontSize:"45px"}}>Você irá receber de {(((amountMatic[0] / 10**18) * 1.8).toFixed(2))} à {(((amountMatic[1] / 10**18) * 2.1).toFixed(2))} matics para a carteira {accounts[0]}</h1>
+          <h2 style={{fontFamily:"VT323", fontSize:"30px"}}>Total de R${reais}</h2>
           <Button
               backgroundColor="red"
               borderRadius="5px"
               boxShadow="0px 2px 2px 1px #0F0F0F"
               color="white"
               cursor="pointer"
-              fontFamily="inherit"
+              fontFamily="VT323" 
+              fontSize="22px"
               padding="15px"
               margin="10"
               onClick={cancel}
@@ -337,7 +338,8 @@ async function getUser() {
               boxShadow="0px 2px 2px 1px #0F0F0F"
               color="white"
               cursor="pointer"
-              fontFamily="inherit"
+              fontFamily="VT323" 
+              fontSize="22px"
               padding="15px"
               margin="10"
               onClick={chamadaAPI}
@@ -354,11 +356,11 @@ async function getUser() {
     <Flex justify="center" align="center" height="100vh" paddingBottom="350px">
       <Box width="1200px">
         <div>
-          <Text fontSize="48px" textShadow="0 5px #000000">
+          <Text fontSize="85px" textShadow="0 5px #000000" fontFamily="VT323">
             CryptoPix
           </Text>
           <Text
-            fontSize="30px"
+            fontSize="25px"
             letterSpacing="-5.5%"
             fontFamily="VT323"
             textShadow="0 2px 2px #000000"
@@ -376,7 +378,7 @@ async function getUser() {
                   placeholder="Nome" 
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  style={{ width: "350px", height:"35px", fontFamily: "inherit"}}
+                  style={{ width: "350px", height:"35px", fontFamily:"VT323", fontSize:"22px" }}
                 />
                 <div>
                 <div>
@@ -386,7 +388,7 @@ async function getUser() {
                   placeholder="Email"
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  style={{ width: "350px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                  style={{ width: "350px", height:"35px", fontFamily:"VT323", fontSize:"22px", marginTop: "15px"}}
                 />
                 </div>
                 <div>
@@ -396,7 +398,7 @@ async function getUser() {
                   placeholder="CPF"
                   value={CPF}
                   onChange={handleCPF}
-                  style={{ width: "350px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                  style={{ width: "350px", height:"35px", fontFamily:"VT323", fontSize:"22px", marginTop: "15px"}}
                 />
                 </div>
                 <div style={{marginBottom: "15px"}}>
@@ -406,7 +408,7 @@ async function getUser() {
                   placeholder="Quantidade de reais"
                   value={reais}
                   onChange={handleReais}
-                  style={{ width: "350px", height:"35px", fontFamily: "inherit", marginTop: "15px"}}
+                  style={{ width: "350px", height:"35px", fontFamily:"VT323", fontSize:"22px", marginTop: "15px"}}
                 />
                 </div>
                 </div>
@@ -417,7 +419,8 @@ async function getUser() {
               boxShadow="0px 2px 2px 1px #0F0F0F"
               color="white"
               cursor="pointer"
-              fontFamily="inherit"
+              fontFamily="VT323" 
+              fontSize="22px"
               padding="15px"
               margin="10"
               onClick={master}
